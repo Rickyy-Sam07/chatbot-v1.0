@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chatbot Integration</title>
+    <style>
+      /* Styling for the entire page */
+      body {
+        font-family: Arial, sans-serif;
+        background: conic-gradient(from 180deg, #6a11cb, #ff6f61);
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+      }
+
+      h1 {
+        color: #fff;
+        text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+      }
+
+      p {
+        color: #f0f0f0;
+        text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+      }
+
+      /* Styling for the chatbot container */
+      .chatbot-container {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        width: 350px;
+        height: 480px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        border-radius: 10px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        z-index: 9999;
+        background-color: #fff;
+        display: none; /* Hide by default */
+      }
+
+      .chatbot-header {
+        background: linear-gradient(135deg, #ff6f61, #ff896b);
+        color: white;
+        padding: 15px;
+        text-align: center;
+        font-size: 20px;
+        font-weight: bold;
+        position: relative;
+      }
+
+      .chatbot-iframe {
+        border: none;
+        width: 100%;
+        height: calc(100% - 50px);
+      }
+
+      .chatbot-container:hover {
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+      }
+
+      .close-button {
+        position: absolute;
+        top: 5px;
+        right: 10px;
+        background-color: transparent;
+        border: none;
+        font-size: 24px;
+        color: white;
+        cursor: pointer;
+      }
+
+      .close-button:hover {
+        color: #ccc;
+      }
+
+      /* Styling for the chatbot button */
+      .chatbot-button {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        width: 60px;
+        height: 60px;
+        background-color: #fc0303;
+        border-radius: 50%;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        border: none;
+        color: white;
+        font-size: 30px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10000;
+      }
+
+      .chatbot-button:hover {
+        background-color: #ff896b;
+      }
+
+      /* Additional styles for the page */
+      .df-messenger-wrapper {
+        max-width: 400px;
+        width: 100%;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        background-color: #fff;
+        margin-top: 20px; /* Adjust as needed */
+      }
+
+      .df-messenger-header {
+        background-color: #4caf50;
+        color: #fff;
+        padding: 12px;
+        text-align: center;
+        font-size: 18px;
+        font-weight: bold;
+        border-bottom: 2px solid #388e3c;
+      }
+
+      .df-messenger-chat-title {
+        font-size: 16px;
+        margin: 0;
+      }
+
+      .df-messenger-agent {
+        color: #333;
+      }
+
+      .df-messenger-chat {
+        padding: 10px;
+        height: 300px; /* Adjust as needed */
+        overflow-y: auto;
+        scrollbar-width: thin;
+      }
+
+      .df-messenger-input-container {
+        padding: 10px;
+        border-top: 2px solid #ddd;
+      }
+
+      .df-messenger-input {
+        width: calc(100% - 20px);
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 14px;
+        outline: none;
+      }
+
+      .df-messenger-send {
+        background-color: #4caf50;
+        color: #fff;
+        border: none;
+        padding: 8px 16px;
+        margin-left: 10px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 14px;
+        outline: none;
+        transition: background-color 0.3s ease;
+      }
+
+      .df-messenger-send:hover {
+        background-color: #388e3c;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Welcome to My Website</h1>
+    <p>This is my website where you can interact with my chatbot.</p>
+
+    <!-- Dialogflow Messenger Widget -->
+    <div class="df-messenger-wrapper">
+      <div class="df-messenger-header">
+        <div class="df-messenger-chat-title">COLLEGE_BOT</div>
+        <div class="df-messenger-agent">Chat with us!</div>
+      </div>
+      <df-messenger
+        intent="WELCOME"
+        agent-id="###############" # give your agent id here from diaglogflow
+        
+        language-code="en"
+      ></df-messenger>
+    </div>
+
+    <!-- Chatbot Container (for custom chatbot) -->
+    <div class="chatbot-container" id="chatbotContainer">
+      <div class="chatbot-header">
+        Chat with Us!
+        <button class="close-button" onclick="toggleChatbot()">×</button>
+      </div>
+      <iframe
+        class="chatbot-iframe"
+        allow="microphone;"
+        src="https://console.dialogflow.com/api-client/demo/embedded/ee2de1a9-4b18-4082-8997-0f907368cc94"
+      ></iframe>
+    </div>
+
+    <!-- Chatbot Button (for custom chatbot) -->
+    <button class="chatbot-button" id="chatbotButton" onclick="toggleChatbot()">
+      💬
+    </button>
+
+    <!-- JavaScript to toggle chatbot visibility -->
+    <script>
+      function toggleChatbot() {
+        const chatbotContainer = document.getElementById("chatbotContainer");
+        const chatbotButton = document.getElementById("chatbotButton");
+        if (
+          chatbotContainer.style.display === "none" ||
+          chatbotContainer.style.display === ""
+        ) {
+          chatbotContainer.style.display = "block";
+          chatbotButton.style.display = "none";
+        } else {
+          chatbotContainer.style.display = "none";
+          chatbotButton.style.display = "flex";
+        }
+      }
+    </script>
+  </body>
+</html>
